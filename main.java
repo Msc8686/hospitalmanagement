@@ -806,7 +806,7 @@ class Hospital {
 // MAIN CLASS
 // =====================================================
 
-public class Main {
+public class main {
 
     static Scanner scanner = new Scanner(System.in);
 

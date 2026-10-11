@@ -1,5 +1,6 @@
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import java.sql.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class HospitalServer {
 
@@ -29,6 +32,7 @@ public class HospitalServer {
         HttpServer server =
                 HttpServer.create(new InetSocketAddress(8080), 0);
 
+                
         server.createContext("/api/doctors",
                 HospitalServer::getDoctors);
 
@@ -76,7 +80,93 @@ public class HospitalServer {
 
         server.createContext("/api/admin/report",
                 HospitalServer::report);
+       server.createContext("/", exchange -> {
+    try {
+        // Serve files only for GET requests.
+        if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+            exchange.getResponseHeaders().set("Allow", "GET");
+            exchange.sendResponseHeaders(405, -1);
+            return;
+        }
 
+        // Main project folder (the folder containing index.html).
+        Path root = Path.of(".").toAbsolutePath().normalize();
+
+        // Get the requested URL path, ignoring query parameters.
+        String requestPath = exchange.getRequestURI().getPath();
+
+        // Open index.html when the homepage is requested.
+        if (requestPath.equals("/")) {
+            requestPath = "/index.html";
+        }
+
+        // Convert the URL path to a file path.
+        Path file = root.resolve(requestPath.substring(1)).normalize();
+
+        // Prevent requests from accessing files outside the project folder.
+        if (!file.startsWith(root) || !Files.isRegularFile(file)) {
+            byte[] message = "404 Not Found".getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set(
+                "Content-Type", "text/plain; charset=UTF-8"
+            );
+            exchange.sendResponseHeaders(404, message.length);
+            exchange.getResponseBody().write(message);
+            return;
+        }
+
+        // Read the requested HTML, CSS, JavaScript, or other asset.
+        byte[] content = Files.readAllBytes(file);
+
+        // Set the correct content type for common static files.
+        String name = file.getFileName().toString().toLowerCase();
+        String contentType;
+
+        if (name.endsWith(".html")) {
+            contentType = "text/html; charset=UTF-8";
+        } else if (name.endsWith(".css")) {
+            contentType = "text/css; charset=UTF-8";
+        } else if (name.endsWith(".js")) {
+            contentType = "text/javascript; charset=UTF-8";
+        } else if (name.endsWith(".json")) {
+            contentType = "application/json; charset=UTF-8";
+        } else if (name.endsWith(".svg")) {
+            contentType = "image/svg+xml";
+        } else if (name.endsWith(".png")) {
+            contentType = "image/png";
+        } else if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
+            contentType = "image/jpeg";
+        } else if (name.endsWith(".gif")) {
+            contentType = "image/gif";
+        } else if (name.endsWith(".ico")) {
+            contentType = "image/x-icon";
+        } else if (name.endsWith(".woff2")) {
+            contentType = "font/woff2";
+        } else if (name.endsWith(".woff")) {
+            contentType = "font/woff";
+        } else if (name.endsWith(".ttf")) {
+            contentType = "font/ttf";
+        } else {
+            contentType = "application/octet-stream";
+        }
+
+        exchange.getResponseHeaders().set("Content-Type", contentType);
+        exchange.getResponseHeaders().set("X-Content-Type-Options", "nosniff");
+        exchange.sendResponseHeaders(200, content.length);
+        exchange.getResponseBody().write(content);
+
+    } catch (IOException e) {
+        e.printStackTrace();
+
+        try {
+            exchange.sendResponseHeaders(500, -1);
+        } catch (IOException ignored) {
+            // The response may already have been sent.
+        }
+    } finally {
+        exchange.close();
+    }
+});
+    
         server.setExecutor(null);
         server.start();
 
@@ -167,32 +257,73 @@ public class HospitalServer {
     // PATIENT REGISTRATION
     // =====================================================
 
-    static void registerPatient(HttpExchange exchange)
-            throws IOException {
 
-        if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-            sendResponse(exchange, 405, "Method Not Allowed");
-            return;
+static void registerPatient(HttpExchange exchange)
+        throws IOException {
+
+    if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+        sendResponse(exchange, 405, "Method Not Allowed");
+        return;
+    }
+
+    Map<String, String> data = readFormData(exchange);
+
+    String name = data.get("name");
+    String phone = data.get("phone");
+    String email = data.get("email");
+    String disease = data.get("disease");
+    String address = data.get("address");
+    String bloodGroup = data.get("bloodGroup");
+    String emergencyContact = data.get("emergencyContact");
+
+    if (name == null || name.trim().isEmpty()
+            || phone == null || email == null) {
+        sendResponse(exchange, 400,
+                "{\"success\":false,\"message\":\"Missing information\"}");
+        return;
+    }
+
+    try (Connection conn = DatabaseConnection.getConnection()) {
+
+        int patientId;
+
+        // Find the next available patient ID.
+        String idSql =
+                "SELECT COALESCE(MAX(patient_id), 1000) + 1 AS next_id "
+                + "FROM patients";
+
+        try (PreparedStatement idStmt =
+                     conn.prepareStatement(idSql);
+             ResultSet rs = idStmt.executeQuery()) {
+
+            rs.next();
+            patientId = rs.getInt("next_id");
         }
 
-        Map<String, String> data = readFormData(exchange);
+        // Insert the patient into MySQL.
+        String sql =
+                "INSERT INTO patients "
+                + "(patient_id, name, phone, email, disease, address, "
+                + "blood_group, emergency_contact) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        String name = data.get("name");
-        String phone = data.get("phone");
-        String email = data.get("email");
-        String disease = data.get("disease");
-        String address = data.get("address");
-        String bloodGroup = data.get("bloodGroup");
-        String emergencyContact = data.get("emergencyContact");
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        if (name == null || phone == null || email == null) {
-            sendResponse(exchange, 400,
-                    "{\"success\":false,\"message\":\"Missing information\"}");
-            return;
+            stmt.setInt(1, patientId);
+            stmt.setString(2, name);
+            stmt.setString(3, phone);
+            stmt.setString(4, email);
+            stmt.setString(5, disease);
+            stmt.setString(6, address);
+            stmt.setString(7, bloodGroup);
+            stmt.setString(8, emergencyContact);
+
+            stmt.executeUpdate();
         }
 
+        // Keep the current in-memory application working.
         Patient patient = new Patient(
-                nextPatientId++,
+                patientId,
                 name,
                 phone,
                 email,
@@ -203,16 +334,26 @@ public class HospitalServer {
         );
 
         hospital.addPatient(patient);
+        nextPatientId = Math.max(nextPatientId, patientId + 1);
 
         String response =
                 "{"
-                        + "\"success\":true,"
-                        + "\"message\":\"Patient registered successfully\","
-                        + "\"patientId\":" + patient.getPatientId()
-                        + "}";
+                + "\"success\":true,"
+                + "\"message\":\"Patient registered successfully\","
+                + "\"patientId\":" + patient.getPatientId()
+                + "}";
 
         sendResponse(exchange, 200, response);
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+
+        sendResponse(exchange, 500,
+                "{\"success\":false,\"message\":\"Database error while registering patient\"}");
     }
+}
+
+       
 
 
     // =====================================================
