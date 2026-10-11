@@ -1,0 +1,403 @@
+/* =====================================================
+   CITY CARE HOSPITAL - DASHBOARD STYLES
+   Use this CSS in each role's dashboard stylesheet.
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f8fb;
+    color: #243b53;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* ---------- Header ---------- */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    padding: 20px 6%;
+    background: #0b6e8e;
+    color: white;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.dashboard-header p {
+    margin: 4px 0 0;
+    opacity: 0.85;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    color: #0b6e8e;
+    font-weight: 700;
+}
+
+
+/* ---------- Main dashboard ---------- */
+
+.dashboard {
+    width: min(1200px, 92%);
+    margin: 30px auto 60px;
+}
+
+.welcome-panel {
+    margin-bottom: 24px;
+}
+
+.welcome-panel h2 {
+    margin: 0 0 7px;
+    color: #102a43;
+}
+
+.welcome-panel p {
+    margin: 0;
+    color: #627d98;
+}
+
+
+/* ---------- Statistics cards ---------- */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    padding: 22px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card .label {
+    color: #627d98;
+    font-size: 0.9rem;
+}
+
+.stat-card .value {
+    margin-top: 6px;
+    color: #0b6e8e;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+
+/* ---------- Dashboard panels ---------- */
+
+.panel {
+    margin-bottom: 24px;
+    padding: 25px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.06);
+}
+
+.panel h3 {
+    margin: 0 0 17px;
+    color: #102a43;
+}
+
+.panel-note {
+    color: #627d98;
+    font-size: 0.92rem;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.panel-heading h3 {
+    margin-bottom: 17px;
+}
+
+.count-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: #eaf8fc;
+    color: #0b6e8e;
+    font-size: 0.85rem;
+}
+
+
+/* ---------- Tables ---------- */
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e6edf2;
+    vertical-align: top;
+}
+
+th {
+    background: #eef7fa;
+    color: #334e68;
+}
+
+td {
+    color: #486581;
+}
+
+tbody tr:hover {
+    background: #f8fcfd;
+}
+
+
+/* ---------- Table buttons ---------- */
+
+.action-btn {
+    margin: 2px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 7px;
+    background: #0b6e8e;
+    color: white;
+    font-size: 0.83rem;
+    font-weight: 700;
+}
+
+.action-btn.secondary,
+.secondary-btn {
+    padding: 9px 13px;
+    border: none;
+    border-radius: 7px;
+    background: #52606d;
+    color: white;
+    font-weight: 700;
+}
+
+.action-btn.light {
+    background: #486581;
+}
+
+.action-btn.danger,
+.danger-btn {
+    background: #a33a3a;
+    color: white;
+}
+
+.primary-btn {
+    margin-top: 15px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #0b6e8e;
+    color: white;
+    font-weight: 700;
+}
+
+.primary-btn:hover,
+.action-btn:hover,
+.logout-btn:hover,
+.secondary-btn:hover,
+.danger-btn:hover {
+    opacity: 0.85;
+}
+
+
+/* ---------- Forms ---------- */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    color: #334e68;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #bcccdc;
+    border-radius: 8px;
+    background: white;
+    color: #243b53;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: 2px solid #b3e4f0;
+    border-color: #0b6e8e;
+}
+
+.inline-form {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.inline-form .form-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+
+/* ---------- Patient/medical information ---------- */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid #d9e2ec;
+    border-radius: 10px;
+    background: #f7fbfd;
+}
+
+.info-grid p {
+    margin: 5px 0;
+    overflow-wrap: anywhere;
+}
+
+.info-grid .full {
+    grid-column: 1 / -1;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 14px;
+    background: #eaf8fc;
+    color: #0b6e8e;
+    font-size: 0.85rem;
+}
+
+.actions {
+    min-width: 220px;
+}
+
+
+/* ---------- Feedback and empty states ---------- */
+
+.empty-state,
+.error-state {
+    padding: 18px;
+    border-radius: 9px;
+    text-align: center;
+}
+
+.empty-state {
+    background: #f7fbfd;
+    color: #627d98;
+}
+
+.error-state {
+    background: #fff1f1;
+    color: #a33a3a;
+}
+
+.feedback {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.feedback.success {
+    color: #267346;
+}
+
+.feedback.error {
+    color: #a33a3a;
+}
+
+
+/* ---------- Responsive layout ---------- */
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .dashboard {
+        width: 94%;
+    }
+
+    .stats-grid,
+    .form-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full,
+    .info-grid .full {
+        grid-column: auto;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+}

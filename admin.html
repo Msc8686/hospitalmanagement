@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administrator Dashboard | City Care Hospital</title>
+
+    <link rel="stylesheet" href="admin-dashboard.css">
+    <script src="admin-dashboard.js" defer></script>
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+    <div>
+        <h1>🏥 City Care Hospital</h1>
+        <p>Administrator Workspace</p>
+    </div>
+
+    <div class="header-user">
+        <span>Logged in as <strong>Administrator</strong></span>
+
+        <button class="logout-btn" type="button"
+                onclick="logoutAdmin()">
+            Logout
+        </button>
+    </div>
+
+</header>
+
+<main class="dashboard">
+
+    <section class="welcome-panel">
+        <h2>Administrator Dashboard</h2>
+        <p>
+            Review hospital statistics and manage patients,
+            doctors and appointments.
+        </p>
+    </section>
+
+    <section class="stats-grid">
+
+        <article class="stat-card">
+            <div class="label">Total Patients</div>
+            <div class="value" id="patientCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">Total Doctors</div>
+            <div class="value" id="doctorCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">Total Appointments</div>
+            <div class="value" id="appointmentCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">Medical Records</div>
+            <div class="value" id="recordCount">0</div>
+        </article>
+
+    </section>
+
+    <section class="panel">
+
+        <div class="panel-heading">
+
+            <h3>
+                Today's Appointments
+                <span id="todayCount" class="count-badge">0</span>
+            </h3>
+
+            <button type="button"
+                    class="secondary-btn"
+                    onclick="loadAdminDashboard()">
+                Refresh
+            </button>
+
+        </div>
+
+        <div id="todayAppointments">
+            <p class="empty-state">Loading appointments…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>All Appointments</h3>
+
+        <div id="allAppointments">
+            <p class="empty-state">Loading appointments…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>All Patients</h3>
+
+        <div id="allPatients">
+            <p class="empty-state">Loading patients…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>All Doctors</h3>
+
+        <div id="allDoctors">
+            <p class="empty-state">Loading doctors…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Add Doctor</h3>
+
+        <form id="addDoctorForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="newDoctorName">Full Name</label>
+                    <input id="newDoctorName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorPhone">Phone</label>
+                    <input id="newDoctorPhone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorEmail">Email</label>
+                    <input id="newDoctorEmail"
+                           type="email" name="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorSpecialty">Specialization</label>
+                    <input id="newDoctorSpecialty"
+                           name="specialization" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorDepartment">Department</label>
+                    <input id="newDoctorDepartment"
+                           name="department" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorExperience">
+                        Experience (years)
+                    </label>
+                    <input id="newDoctorExperience"
+                           type="number" min="0"
+                           name="experience" value="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorUsername">Login username</label>
+                    <input id="newDoctorUsername"
+                           name="username"
+                           placeholder="Auto-generated if blank">
+                </div>
+
+                <div class="form-group">
+                    <label for="newDoctorPassword">Login password</label>
+                    <input id="newDoctorPassword"
+                           name="password"
+                           type="password"
+                           placeholder="Default if blank">
+                </div>
+
+            </div>
+
+            <button class="primary-btn" type="submit">
+                Add Doctor
+            </button>
+
+            <p id="addDoctorFeedback"
+               class="feedback" role="status"></p>
+
+        </form>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Remove Doctor</h3>
+
+        <p class="panel-note">
+            Doctors with appointment history cannot be removed;
+            this protects existing appointment records.
+        </p>
+
+        <form id="removeDoctorForm" class="inline-form">
+
+            <div class="form-group">
+                <label for="removeDoctorId">Doctor ID</label>
+                <input id="removeDoctorId"
+                       type="number"
+                       name="doctorId"
+                       required>
+            </div>
+
+            <button class="danger-btn" type="submit">
+                Remove Doctor
+            </button>
+
+        </form>
+
+        <p id="removeDoctorFeedback"
+           class="feedback" role="status"></p>
+
+    </section>
+
+</main>
+
+</body>
+</html>

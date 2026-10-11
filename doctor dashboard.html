@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Dashboard | City Care Hospital</title>
+
+    <link rel="stylesheet" href="doctor-dashboard.css">
+    <script src="doctor-dashboard.js" defer></script>
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+    <div>
+        <h1>🏥 City Care Hospital</h1>
+        <p>Doctor Workspace</p>
+    </div>
+
+    <div class="header-user">
+        <span>
+            Welcome, <strong id="doctorName">Doctor</strong>
+        </span>
+
+        <button class="logout-btn" type="button"
+                onclick="logoutDoctor()">
+            Logout
+        </button>
+    </div>
+
+</header>
+
+<main class="dashboard">
+
+    <section class="welcome-panel">
+        <h2>Doctor Dashboard</h2>
+        <p>
+            Review scheduled visits and manage patient medical records.
+        </p>
+    </section>
+
+    <section class="stats-grid">
+
+        <article class="stat-card">
+            <div class="label">Today's Appointments</div>
+            <div class="value" id="todayCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">All Appointments</div>
+            <div class="value" id="totalCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">Unique Patients</div>
+            <div class="value" id="patientCount">0</div>
+        </article>
+
+        <article class="stat-card">
+            <div class="label">Doctor ID</div>
+            <div class="value" id="doctorIdDisplay">—</div>
+        </article>
+
+    </section>
+
+    <section class="panel">
+
+        <div class="panel-heading">
+            <h3>Today's Appointments</h3>
+
+            <button type="button"
+                    class="secondary-btn"
+                    onclick="loadDoctorDashboard()">
+                Refresh
+            </button>
+        </div>
+
+        <div id="todayAppointments">
+            <p class="empty-state">Loading appointments…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>All Appointments</h3>
+
+        <div id="allAppointments">
+            <p class="empty-state">Loading appointments…</p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Patient Information</h3>
+
+        <div id="patientInformation">
+            <p class="empty-state">
+                Choose "Patient Details" in an appointment row.
+            </p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Medical Record</h3>
+
+        <div id="medicalRecord">
+            <p class="empty-state">
+                Choose "View Record" in an appointment row.
+            </p>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Add / Update Medical Record</h3>
+
+        <p class="panel-note">
+            Use this form with a patient registered in the database.
+        </p>
+
+        <form id="recordForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="recordPatientId">Patient ID</label>
+                    <input id="recordPatientId"
+                           type="number"
+                           name="patientId"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="recordDate">Record Date</label>
+                    <input id="recordDate"
+                           type="date"
+                           name="date"
+                           required>
+                </div>
+
+                <div class="form-group full">
+                    <label for="diagnosis">Diagnosis</label>
+                    <input id="diagnosis"
+                           type="text"
+                           name="diagnosis"
+                           required>
+                </div>
+
+                <div class="form-group full">
+                    <label for="prescription">Prescription</label>
+                    <textarea id="prescription"
+                              name="prescription"
+                              rows="3"></textarea>
+                </div>
+
+                <div class="form-group full">
+                    <label for="history">Medical History</label>
+                    <textarea id="history"
+                              name="history"
+                              rows="3"></textarea>
+                </div>
+
+            </div>
+
+            <button type="submit" class="primary-btn">
+                Save Medical Record
+            </button>
+
+        </form>
+
+        <p id="recordMessage" class="feedback" role="status"></p>
+
+    </section>
+
+</main>
+
+</body>
+</html>

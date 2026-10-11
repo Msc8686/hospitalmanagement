@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Dashboard | City Care Hospital</title>
+
+    <link rel="stylesheet" href="patient-dashboard.css">
+    <script src="patient-dashboard.js" defer></script>
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+    <div>
+        <h1>🏥 City Care Hospital</h1>
+        <p>Patient Workspace</p>
+    </div>
+
+    <div class="header-user">
+
+        <span>
+            Welcome, <strong id="patientName">Patient</strong>
+            · ID <strong id="patientIdHeader">—</strong>
+        </span>
+
+        <button class="logout-btn" type="button"
+                onclick="logoutPatient()">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+<main class="dashboard">
+
+    <section class="welcome-panel">
+        <h2>Patient Dashboard</h2>
+        <p>
+            Book appointments, review upcoming visits and view your
+            medical record.
+        </p>
+    </section>
+
+
+    <!-- BOOK APPOINTMENT -->
+
+    <section class="panel">
+
+        <h3>Book an Appointment</h3>
+
+        <form id="appointmentForm">
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+
+                    <label for="doctorSelect">Choose Doctor</label>
+
+                    <select id="doctorSelect"
+                            name="doctorId" required>
+                        <option value="">Loading doctors…</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input id="appointmentDate"
+                           type="date"
+                           name="date"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentTime">Time</label>
+                    <input id="appointmentTime"
+                           type="time"
+                           name="time"
+                           required>
+                </div>
+
+            </div>
+
+            <button type="submit" class="primary-btn">
+                Book Appointment
+            </button>
+
+        </form>
+
+        <p id="bookingFeedback"
+           class="feedback" role="status"></p>
+
+    </section>
+
+
+    <!-- APPOINTMENTS -->
+
+    <section class="panel">
+
+        <div class="panel-heading">
+
+            <h3>My Appointments</h3>
+
+            <button class="secondary-btn"
+                    type="button"
+                    onclick="loadPatientAppointments()">
+                Refresh
+            </button>
+
+        </div>
+
+        <div id="appointments">
+            <p class="empty-state">Loading appointments…</p>
+        </div>
+
+    </section>
+
+
+    <!-- RESCHEDULE -->
+
+    <section class="panel">
+
+        <h3>Reschedule an Appointment</h3>
+
+        <form id="rescheduleForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="rescheduleId">Appointment ID</label>
+                    <input id="rescheduleId"
+                           name="appointmentId"
+                           type="number"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rescheduleDate">New Date</label>
+                    <input id="rescheduleDate"
+                           name="date"
+                           type="date"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rescheduleTime">New Time</label>
+                    <input id="rescheduleTime"
+                           name="time"
+                           type="time"
+                           required>
+                </div>
+
+            </div>
+
+            <button type="submit" class="primary-btn">
+                Reschedule
+            </button>
+
+        </form>
+
+        <p id="rescheduleFeedback"
+           class="feedback" role="status"></p>
+
+    </section>
+
+
+    <!-- CANCEL -->
+
+    <section class="panel">
+
+        <h3>Cancel an Appointment</h3>
+
+        <form id="cancelForm" class="inline-form">
+
+            <div class="form-group">
+                <label for="cancelId">Appointment ID</label>
+                <input id="cancelId"
+                       name="appointmentId"
+                       type="number"
+                       required>
+            </div>
+
+            <button class="danger-btn" type="submit">
+                Cancel Appointment
+            </button>
+
+        </form>
+
+        <p id="cancelFeedback"
+           class="feedback" role="status"></p>
+
+    </section>
+
+
+    <!-- MEDICAL RECORD -->
+
+    <section class="panel">
+
+        <div class="panel-heading">
+
+            <h3>My Medical Record</h3>
+
+            <button class="secondary-btn"
+                    type="button"
+                    onclick="loadMedicalRecord()">
+                Refresh
+            </button>
+
+        </div>
+
+        <div id="medicalRecord">
+            <p class="empty-state">Loading medical record…</p>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
