@@ -449,6 +449,15 @@ body {
     margin-bottom: 25px;
 }
 
+.form-box .registration-message {
+    color: #b42318;
+    white-space: pre-line;
+}
+
+.form-box .registration-message.success {
+    color: #18794e;
+}
+
 .form-box form {
     display: flex;
     flex-direction: column;

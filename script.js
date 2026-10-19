@@ -91,18 +91,24 @@ async function loadDoctors() {
 
 const registerForm =
     document.getElementById("registerForm");
-
+const registerMessage =
+    document.getElementById("registerMessage");
+ 
 if (registerForm) {
+   console.log("Register form found:", registerForm);
 
     registerForm.addEventListener("submit", async function(event) {
 
         event.preventDefault();
+        registerMessage.textContent = "";
+        registerMessage.classList.add("hidden");
+        registerMessage.classList.remove("success");
 
         const formData =
             new FormData(registerForm);
 
         const data =
-            new URLSearchParams(formData);
+            Object.fromEntries(formData.entries());
 
         try {
 
@@ -113,10 +119,10 @@ if (registerForm) {
 
                     headers: {
                         "Content-Type":
-                            "application/x-www-form-urlencoded"
+                            "application/json"
                     },
 
-                    body: data
+                    body: JSON.stringify(data)
                 });
 
             const result =
@@ -124,23 +130,28 @@ if (registerForm) {
 
             if (result.success) {
 
-                alert(
+                registerMessage.textContent =
                     "Registration successful!\nYour Patient ID is: "
-                    + result.patientId
-                );
+                    + result.patientId;
+                registerMessage.classList.add("success");
+                registerMessage.classList.remove("hidden");
 
                 registerForm.reset();
 
             } else {
 
-                alert(result.message);
+                registerMessage.textContent =
+                    result.message || "Registration failed.";
+                registerMessage.classList.remove("hidden");
             }
 
         } catch (error) {
 
             console.error(error);
 
-            alert("Unable to connect to Java server.");
+            registerMessage.textContent =
+                "Unable to connect to Java server.";
+            registerMessage.classList.remove("hidden");
         }
 
     });

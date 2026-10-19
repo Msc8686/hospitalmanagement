@@ -8,8 +8,9 @@
     <title>Hospital Appointment & Patient Management System</title>
 
     <link rel="stylesheet" href="style.css">
+    
 </head>
-<script src="script.js"></script>
+
 <body>
 
     <!-- ================= NAVIGATION BAR ================= -->
@@ -390,14 +391,19 @@
                 Create your patient account
             </p>
 
-            <form onsubmit="registerPatient(event)">
+            <form id="registerForm">
+
+                <p id="registerMessage"
+                   class="registration-message hidden"
+                   role="status"
+                   aria-live="polite"></p>
 
                 <label>
                     Full Name
                 </label>
 
                 <input
-                    type="text"
+                    type="text" name="fullName"
                     placeholder="Enter your name"
                     required
                 >
@@ -408,7 +414,7 @@
                 </label>
 
                 <input
-                    type="tel"
+                    type="tel" name="phoneNumber"
                     placeholder="Enter phone number"
                     required
                 >
@@ -419,7 +425,7 @@
                 </label>
 
                 <input
-                    type="email"
+                    type="email" name="email"
                     placeholder="Enter email"
                     required
                 >
@@ -430,7 +436,7 @@
                 </label>
 
                 <input
-                    type="text"
+                    type="text" name="disease"
                     placeholder="Enter disease or health problem"
                 >
 
@@ -440,7 +446,7 @@
                 </label>
 
                 <textarea
-                    placeholder="Enter address">
+                    placeholder="Enter address" name="address" rows="3"> 
                 </textarea>
 
 
@@ -448,7 +454,7 @@
                     Blood Group
                 </label>
 
-                <select>
+                <select name="bloodGroup" required>
 
                     <option>Select Blood Group</option>
                     <option>A+</option>
@@ -470,6 +476,7 @@
                 <input
                     type="tel"
                     placeholder="Emergency contact"
+                    name="emergencyContact"
                 >
 
 
@@ -817,15 +824,7 @@
         }
 
 
-        function registerPatient(event) {
-
-            event.preventDefault();
-
-            alert(
-                "Patient registration submitted successfully!"
-            );
-
-        }
+        
 
 
         function patientLogin(event) {
@@ -872,5 +871,6 @@
     </script>
 
 </body>
+<script src="script.js"></script>
 
 </html>

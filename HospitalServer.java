@@ -266,22 +266,30 @@ static void registerPatient(HttpExchange exchange)
         return;
     }
 
-    Map<String, String> data = readFormData(exchange);
+    String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+    if (contentType == null
+            || !contentType.toLowerCase().startsWith("application/json")) {
+        sendResponse(exchange, 415,
+                "{\"success\":false,\"message\":\"Content-Type must be application/json\"}");
+        return;
+    }
 
-    String name = data.get("name");
-    String phone = data.get("phone");
+    Map<String, String> data;
+    try {
+        data = readJsonData(exchange);
+    } catch (IllegalArgumentException e) {
+        sendResponse(exchange, 400,
+                "{\"success\":false,\"message\":\"Invalid JSON request body\"}");
+        return;
+    }
+
+    String name = data.get("fullName");
+    String phone = data.get("phoneNumber");
     String email = data.get("email");
     String disease = data.get("disease");
     String address = data.get("address");
     String bloodGroup = data.get("bloodGroup");
     String emergencyContact = data.get("emergencyContact");
-
-    if (name == null || name.trim().isEmpty()
-            || phone == null || email == null) {
-        sendResponse(exchange, 400,
-                "{\"success\":false,\"message\":\"Missing information\"}");
-        return;
-    }
 
     try (Connection conn = DatabaseConnection.getConnection()) {
 
@@ -1093,6 +1101,154 @@ static void registerPatient(HttpExchange exchange)
         return map;
     }
 
+    static Map<String, String> readJsonData(
+            HttpExchange exchange)
+            throws IOException {
+
+        String body =
+                new String(
+                        exchange.getRequestBody().readAllBytes(),
+                        StandardCharsets.UTF_8
+                );
+
+        return parseJsonObject(body);
+    }
+
+    static Map<String, String> parseJsonObject(String json) {
+
+        Map<String, String> map = new HashMap<>();
+        int[] index = {0};
+
+        skipJsonWhitespace(json, index);
+        expectJsonCharacter(json, index, '{');
+        skipJsonWhitespace(json, index);
+
+        if (consumeJsonCharacter(json, index, '}')) {
+            skipJsonWhitespace(json, index);
+            if (index[0] != json.length()) {
+                throw new IllegalArgumentException("Unexpected content after JSON object");
+            }
+            return map;
+        }
+
+        while (true) {
+            skipJsonWhitespace(json, index);
+            String key = parseJsonString(json, index);
+            skipJsonWhitespace(json, index);
+            expectJsonCharacter(json, index, ':');
+            skipJsonWhitespace(json, index);
+            String value = parseJsonString(json, index);
+            map.put(key, value);
+            skipJsonWhitespace(json, index);
+
+            if (consumeJsonCharacter(json, index, '}')) {
+                break;
+            }
+
+            expectJsonCharacter(json, index, ',');
+        }
+
+        skipJsonWhitespace(json, index);
+        if (index[0] != json.length()) {
+            throw new IllegalArgumentException("Unexpected content after JSON object");
+        }
+
+        return map;
+    }
+
+    private static String parseJsonString(String json, int[] index) {
+
+        expectJsonCharacter(json, index, '"');
+        StringBuilder value = new StringBuilder();
+
+        while (index[0] < json.length()) {
+            char character = json.charAt(index[0]++);
+
+            if (character == '"') {
+                return value.toString();
+            }
+
+            if (character < 0x20) {
+                throw new IllegalArgumentException("Unescaped control character in JSON string");
+            }
+
+            if (character != '\\') {
+                value.append(character);
+                continue;
+            }
+
+            if (index[0] >= json.length()) {
+                throw new IllegalArgumentException("Incomplete JSON escape");
+            }
+
+            char escaped = json.charAt(index[0]++);
+            switch (escaped) {
+                case '"':
+                case '\\':
+                case '/':
+                    value.append(escaped);
+                    break;
+                case 'b':
+                    value.append('\b');
+                    break;
+                case 'f':
+                    value.append('\f');
+                    break;
+                case 'n':
+                    value.append('\n');
+                    break;
+                case 'r':
+                    value.append('\r');
+                    break;
+                case 't':
+                    value.append('\t');
+                    break;
+                case 'u':
+                    if (index[0] + 4 > json.length()) {
+                        throw new IllegalArgumentException("Incomplete Unicode escape");
+                    }
+                    try {
+                        value.append((char) Integer.parseInt(
+                                json.substring(index[0], index[0] + 4), 16));
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid Unicode escape", e);
+                    }
+                    index[0] += 4;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid JSON escape");
+            }
+        }
+
+        throw new IllegalArgumentException("Unterminated JSON string");
+    }
+
+    private static void skipJsonWhitespace(String json, int[] index) {
+        while (index[0] < json.length()
+                && (json.charAt(index[0]) == ' '
+                || json.charAt(index[0]) == '\n'
+                || json.charAt(index[0]) == '\r'
+                || json.charAt(index[0]) == '\t')) {
+            index[0]++;
+        }
+    }
+
+    private static boolean consumeJsonCharacter(
+            String json, int[] index, char expected) {
+        if (index[0] < json.length() && json.charAt(index[0]) == expected) {
+            index[0]++;
+            return true;
+        }
+        return false;
+    }
+
+    private static void expectJsonCharacter(
+            String json, int[] index, char expected) {
+        if (!consumeJsonCharacter(json, index, expected)) {
+            throw new IllegalArgumentException("Invalid JSON object structure");
+        }
+    }
+
 
     // =====================================================
     // SEND RESPONSE
@@ -1130,7 +1286,7 @@ static void registerPatient(HttpExchange exchange)
     // ESCAPE JSON
     // =====================================================
 
-    static String escape(String text) {
+    http://localhost:8080 static String escape(String text) {
 
         if (text == null) {
             return "";
